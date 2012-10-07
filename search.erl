@@ -3,7 +3,6 @@
 -compile(export_all).
 -export([greedy/0]).
 
-
 %%Ejecuta el algoritmo greedy con los valores inciales.
 greedy() ->
 	board ! {get_neighbors, self()},
@@ -31,6 +30,7 @@ greedy_search(FringeN, FringeH) ->
 		X ->
 			case X of
 			NewPos -> %%En caso de que el punto final este en los vecinos termina!
+				board ! {move, NewPos},
 				io:format("Fin~n");
 			_->  %%En Cualquier otro caso sigue buscando.
 				board ! {move, NewPos},
@@ -48,6 +48,9 @@ greedy_search(FringeN, FringeH) ->
 		end
 	end.
 	
+
+
+
 
 %%retorna el numero de un elemento dentro de una lista.
 index_of(Item, List) -> index_of(Item, List, 1).
