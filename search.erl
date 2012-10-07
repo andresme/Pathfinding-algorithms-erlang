@@ -23,6 +23,7 @@ greedy_search(FringeN, FringeH) ->
 		Min = lists:min(FringeH),
 		Index = index_of(Min, FringeH),
 		NewPos = {R,C} = lists:nth(Index, FringeN),
+		%%borra de la frontera los que ya se han visitado.
 		NewFringeN = lists:delete({R,C}, FringeN),
 		NewFringeH = lists:delete(Min, FringeH),
 		board ! {get_finish, self()},
@@ -38,7 +39,7 @@ greedy_search(FringeN, FringeH) ->
 				receive
 					{[], _} -> %%Si no tiene vecinos entonces busque de nuevo en la frontera.
 						greedy_search(NewFringeN, NewFringeH);
-					{Neighbors, Heuristics} -> %%Si tiene vecinos agreguelos a la frontera y busque de nuevo.
+					{Neighbors, Heuristics} -> %%Si tiene vecinos agreguelos a la frontera y busque.
 						NewFringe3N = lists:append(NewFringeN, Neighbors),
 						NewFringe3H = lists:append(NewFringeH, Heuristics),
 						greedy_search(NewFringe3N, NewFringe3H)
