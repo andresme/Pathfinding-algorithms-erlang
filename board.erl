@@ -91,6 +91,14 @@ eventLoop(Canvas, Board, Pos, SquareType) ->
 	    changeDisplay(Canvas, Board, NewBoard),
 	    eventLoop(Canvas, NewBoard, Pos, SquareType);
 	
+	{get_neighbors_star, Proc} ->
+	    Neighbors = neighbors(Board, Pos),
+	    io:format("neighbors ~w~n", [Neighbors]),
+	    Proc ! {Neighbors, lists:map(fun (X) -> h_star(X) end, Neighbors)},
+	    NewBoard = updateCells(Board, Neighbors, ?FRINGE),
+	    changeDisplay(Canvas, Board, NewBoard),
+	    eventLoop(Canvas, NewBoard, Pos, SquareType);
+	
 	%%Se implemento get_finish para saber cuando el algoritmo debe finalizar.
 	{get_finish, Proc} ->
 		Proc ! get(finish),
@@ -125,6 +133,12 @@ eventLoop(Canvas, Board, Pos, SquareType) ->
 
 neighbors(Board, Pos) ->
     neighbors(Board, Pos, ?NEIGHBORS_OFFSET).
+
+
+h_star({Row, Col}) ->
+    {R,C} = get(finish),
+    {A,B} = get(start),
+    math:sqrt((Row-R)*(Row-R)+(Col-C)*(Col-C))+math:sqrt((Row-A)*(Row-A)+(Col-B)*(Col-B)).
 
 h({Row, Col}) ->
     {R,C} = get(finish),
