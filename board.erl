@@ -90,6 +90,12 @@ eventLoop(Canvas, Board, Pos, SquareType) ->
 	    NewBoard = updateCells(Board, Neighbors, ?FRINGE),
 	    changeDisplay(Canvas, Board, NewBoard),
 	    eventLoop(Canvas, NewBoard, Pos, SquareType);
+	    
+	{get_neighbors_prunning, NewPos, Proc} ->
+	    Neighbors = neighbors(Board, NewPos),
+	    io:format("neighbors ~w~n", [Neighbors]),
+	    Proc ! {Neighbors, lists:map(fun (X) -> h(X) end, Neighbors)},
+	    eventLoop(Canvas, Board, Pos, SquareType);
 	
 	{get_neighbors_star, Proc} ->
 	    Neighbors = neighbors(Board, Pos),

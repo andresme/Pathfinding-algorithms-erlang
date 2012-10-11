@@ -35,7 +35,7 @@ greedy_search(FringeN, FringeH) ->
 				io:format("Fin~n");
 			_->  %%En Cualquier otro caso sigue buscando.
 				board ! {move, NewPos},
-				%%wait(1),
+				wait(1),
 				board ! {get_neighbors, self()},
 				receive
 					{[], _} -> %%Si no tiene vecinos entonces busque de nuevo en la frontera.
@@ -48,6 +48,7 @@ greedy_search(FringeN, FringeH) ->
 			end
 		end
 	end.
+
 
 %%Ejecuta el algoritmo A* con los valores inciales.
 star() ->
@@ -80,7 +81,7 @@ star_search(FringeN, FringeH) ->
 				io:format("Fin~n");
 			_->  %%En Cualquier otro caso sigue buscando.
 				board ! {move, NewPos},
-				%%wait(1),
+				wait(1),
 				board ! {get_neighbors_star, self()},
 				receive
 					{[], _} -> %%Si no tiene vecinos entonces busque de nuevo en la frontera.
@@ -95,7 +96,37 @@ star_search(FringeN, FringeH) ->
 	end.
 
 
+%search_prunning() ->
+%	board ! {get_pos, self()},
+%	receive
+%	{X, Y} ->
+%		board ! {get_neighbors_prunning, {X, Y}, self()},
+%		receive
+%		{Neighbors, _} ->
+%			ListaPrune = prune(Neighbors, {X,Y}, {1,1}, []),
+%			
+%		end
+%	end.
 
+
+%prune(Neighbors, Pos = {C, R}, Dir = {I,J}, ListaPrune) ->
+%	case Neighbors of
+%		[] -> ListaPrune;
+%		[N|Resto] ->
+%			R1 = C * I,
+%			R2 = R * J,
+%			if
+%			(R1 > 0) and (R2 > 0) ->
+%				prune(Resto, Pos, Dir, [N|ListaPrune]);
+%			true ->
+%				prune(Resto, Pos, Dir, ListaPrune)
+%			end
+%	end.
+	
+%jump(ListaPrune, Successors) ->
+%	case ListaPrune of
+%	[] -> Successors;
+%	[H|T] -> 
 
 
 %%retorna el numero de un elemento dentro de una lista.
@@ -106,5 +137,5 @@ index_of(Item, [_|Tl], Index) -> index_of(Item, Tl, Index+1).
 %%Espera una cantidad de segundos.
 wait(Sec) -> 
 	receive
-	after (500 * Sec) -> ok
+	after (250 * Sec) -> ok
 	end.
